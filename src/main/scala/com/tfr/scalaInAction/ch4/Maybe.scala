@@ -4,12 +4,15 @@ package com.tfr.scalaInAction.ch4
   * Created by Erik on 7/14/2017.
   */
 sealed abstract class Maybe[+A] {
-  def isEmpty(): Boolean
+  def isEmpty: Boolean
   def get:A
+  def getOrElse[B >: A](default: B): B = {
+    if(isEmpty) default else get
+  }
 }
 
 final case class Just[A](value:A) extends Maybe[A] {
-  def isEmpty() = false
+  def isEmpty = false
   def get = value
 }
 
