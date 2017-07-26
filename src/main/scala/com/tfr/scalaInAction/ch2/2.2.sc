@@ -32,20 +32,19 @@ s"My name is $name"
 val height = 1.9d
 println(f"$name%s is $height%2.2f meters tall")
 
-//val book =
-//  <book>
-//    <title>Scala in Action</title>
-//    <author>Some guy</author>
-//  </book>
+val book = <book>
+    <title>Scala in Action</title>
+    <author>Some guy</author>
+  </book>
 
 val message = "xml is fun"
 val code = "1"
 
-//val alert =
-//  <alert>
-//    <message priority={code}>{message}</message>
-//    <date>{new java.util.Date}</date>
-//  </alert>
+val alert =
+  <alert>
+    <message priority={code}>{message}</message>
+    <date>{new java.util.Date}</date>
+  </alert>
 
 //var placeHolder:String = _
 
