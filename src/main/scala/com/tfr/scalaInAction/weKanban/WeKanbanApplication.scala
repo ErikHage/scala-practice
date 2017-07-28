@@ -12,12 +12,14 @@ final class WeKanbanApplication extends StreamStreamServletApplication {
 
   val application = new ServletApplication[Stream, Stream] {
 
-    def application(implicit servlet: HttpServlet, servletRequest: HttpServletRequest, request: Request[Stream]) = {
-
-      def found(x: Iterator[Byte]): Response[Stream] = OK << x.toStream
+    def application(implicit servlet: HttpServlet,
+                    servletRequest: HttpServletRequest,
+                    request: Request[Stream]): Response[Stream] = {
+      def found(x: Iterator[Byte]): Response[Stream] = {
+        OK << x.toStream
+      }
 
       HttpServlet.resource(found, NotFound.xhtml)
-
     }
 
   }
