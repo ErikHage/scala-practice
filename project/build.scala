@@ -5,7 +5,7 @@ object H2TaskManager {
   var process: Option[Process] = None
   lazy val H2 = config("h2") extend Compile
 
-  val startH2 = TaskKey[Unit]("startH2", "Starts H2 database")
+  val startH2 = TaskKey[Unit]("startDB", "Starts H2 database")
   val startH2Task = startH2 in H2 <<= (fullClasspath in Compile) map {
     cp =>
       startDatabase {
@@ -28,7 +28,7 @@ object H2TaskManager {
     }
   }
 
-  val stopH2 = TaskKey[Unit]("stopH2", "Stops H2 database")
+  val stopH2 = TaskKey[Unit]("stopDB", "Stops H2 database")
   val stopH2Task = stopH2 in H2 := {
     process match {
       case None =>
@@ -48,6 +48,6 @@ object MainBuild extends Build {
   lazy val scalazVersion = "6.0.3"
   lazy val jettyVersion = "7.3.0.v20110203"
 
-  lazy val weKanban = Project("Scala_Practice", file("."))
+  lazy val weKanban: Project = Project("Scala_Practice", file("."))
     .settings(startH2Task, stopH2Task)
 }

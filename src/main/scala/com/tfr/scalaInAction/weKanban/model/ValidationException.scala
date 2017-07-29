@@ -1,4 +1,4 @@
-package com.tfr.scalaInAction.weKanban
+package com.tfr.scalaInAction.weKanban.model
 
 /**
   * Created by Erik on 7/28/2017.

@@ -2,7 +2,6 @@ package com.tfr.scalaInAction.weKanban.model
 
 import java.sql.DriverManager
 
-import com.tfr.scalaInAction.weKanban.Story
 import org.squeryl.adapters.H2Adapter
 import org.squeryl.{PrimitiveTypeMode, Schema, Session, Table}
 
@@ -17,9 +16,9 @@ object KanbanSchema extends Schema {
     Class.forName("org.h2.Driver")
     if(SessionFactory.concreteFactory.isEmpty) {
       SessionFactory.concreteFactory = Some(() =>
-      Session.create(
-        DriverManager.getConnection("jdbc:h2:tcp://localhost/~/test", "sa", ""),
-        new H2Adapter))
+        Session.create(
+          DriverManager.getConnection("jdbc:h2:tcp://localhost/~/test", "sa", ""),
+          new H2Adapter))
     }
   }
 

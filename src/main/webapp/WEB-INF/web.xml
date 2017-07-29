@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE web-app PUBLIC
         "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
         "http://java.sun.com/dtd/web-app_2_3.dtd">
@@ -8,7 +8,7 @@
         <servlet-class>scalaz.http.servlet.StreamStreamServlet</servlet-class>
         <init-param>
             <param-name>application</param-name>
-            <param-value>com.tfr.scalaInAction.weKanban.WeKanbanApplication</param-value>
+            <param-value>com.tfr.scalaInAction.weKanban.application.WeKanbanApplication</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
