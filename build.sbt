@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "test,container",
   "org.eclipse.jetty" % "jetty-server" % jettyVersion % "container",
   "com.h2database" % "h2" % "1.4.195",
-  "org.squeryl" %% "squeryl" % "0.9.5-7"
+  "org.squeryl" %% "squeryl" % "0.9.5-7",
+  "com.typesafe.akka" % "akka-actor_2.10" % "2.1.0"
 )
 
 enablePlugins(JettyPlugin)
