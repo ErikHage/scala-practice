@@ -1,8 +1,11 @@
 package com.tfr.scalaInAction.ch9.example
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, AllForOneStrategy, OneForOneStrategy, Props, SupervisorStrategy}
 import java.io._
 
+import akka.actor.SupervisorStrategy.Restart
+
+import scala.concurrent.duration._
 import scala.io._
 
 /**
@@ -14,6 +17,14 @@ case class WordCount(fileName:String, count:Int)
 
 
 class WordCountWorker extends Actor {
+
+  override val supervisorStrategy: SupervisorStrategy = OneForOneStrategy(
+    maxNrOfRetries = 3,
+    withinTimeRange = 5 seconds
+  ) {
+    case _: Exception => Restart
+  }
+
   def receive: PartialFunction[Any, Unit] = {
     case FileToCount(fileName:String) =>
       val count = countWords(fileName)
@@ -32,6 +43,12 @@ class WordCountMaster extends Actor {
   //safe to use mutable state inside an actor bc the actor system will ensure that no two threads will execute an instance of an actor at the same time. You must still make sure you don't leak the state outside the actor
   var fileNames: Seq[String] = Nil
   var sortedCount: Seq[(String, Int)] = Nil
+
+  override val supervisorStrategy: SupervisorStrategy = AllForOneStrategy() {
+    case _: Exception =>
+      println("Restarting...")
+      Restart
+  }
 
   def receive: PartialFunction[Any, Unit] = {
 

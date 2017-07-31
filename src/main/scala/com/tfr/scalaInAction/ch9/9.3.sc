@@ -104,3 +104,22 @@ List("a","b","c").zipWithIndex
 
 
 //---------Fault Tolerance made easy with a supervisor
+
+//akka encourages non-defensive programming in which failure is a valid state in the lifecycle of an application
+//fault tolerance support provided through the supervisor hierarchy
+
+//supervisor - an actor that links to supervised actors and restarts them when one dies. responsible for starting, stopping, and monitoring child actors
+//same mechanism as linking, but called supervision strategies
+
+//two restarting strategies
+// One-for-One (DEFAULT): if one actor dies it is recreated
+// All-for-One: all actors supervised by a supervisor are restarted when one dies
+
+//override in an actor:
+//override val supervisorStrategy = oneForOneStrategy(maxNrOfRetries = 3, withinTimeRange = 5 seconds) {
+//  case _: Exception => Restart
+//}
+
+//examples in example.WordCountWorker
+
+
