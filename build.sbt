@@ -28,7 +28,10 @@ libraryDependencies ++= Seq(
   "org.squeryl" %% "squeryl" % "0.9.5-7",
   "com.typesafe.akka" % "akka-actor_2.10" % "2.1.0",
 
-  "org.scalacheck" %% "scalacheck" % "1.10.0"
+  "org.scalacheck" %% "scalacheck" % "1.10.0",
+  "junit" % "junit" % "4.10",
+  "com.novocode" % "junit-interface" % "0.8",
+  "org.specs2" %% "specs2" % "1.13"
 )
 
 enablePlugins(JettyPlugin)
