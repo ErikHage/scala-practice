@@ -27,6 +27,7 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.195",
   "org.squeryl" %% "squeryl" % "0.9.5-7",
   "com.typesafe.akka" % "akka-actor_2.10" % "2.1.0",
+  "joda-time" % "joda-time" % "2.8.1",
 
   "org.scalacheck" %% "scalacheck" % "1.10.0",
   "junit" % "junit" % "4.10",
