@@ -4,17 +4,26 @@ name := "Scala_Practice"
 
 version := "1.0"
 
+autoCompilerPlugins := true
+
 scalacOptions ++= Seq(
   "-unchecked",
   "-deprecation",
   "-feature",
-  "-language:_"
+  "-language:_",
+  "-P:continuations:enable"
 )
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
-  "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
+  "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases",
+  "Akka Repo" at "http://akka.io/repository",
+  "Typesafe Repo" at "http://repo.typesafe.com/typesafe/repo",
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
+
+libraryDependencies <+= scalaVersion { v => compilerPlugin(
+  "org.scala-lang.plugins" % "continuations" % v) }
 
 libraryDependencies ++= Seq(
   "org.mongodb" % "mongo-java-driver" % "2.10.1",
@@ -28,6 +37,10 @@ libraryDependencies ++= Seq(
   "org.squeryl" %% "squeryl" % "0.9.5-7",
   "com.typesafe.akka" % "akka-actor_2.10" % "2.1.0",
   "joda-time" % "joda-time" % "2.8.1",
+  "com.typesafe.akka" % "akka-remote_2.10" % "2.1.0",
+  "com.typesafe.akka" %% "akka-agent" % "2.1.0",
+//  "com.typesafe.akka." % " akka-dataflow_2.10" % "2.1.0",
+  "org.scala-stm" %% "scala-stm" % "0.7",
 
   "org.scalacheck" %% "scalacheck" % "1.10.0",
   "junit" % "junit" % "4.10",
