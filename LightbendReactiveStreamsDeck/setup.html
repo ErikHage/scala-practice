@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+
+<title>Lightbend Akka Streams for Scala - Professional</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link rel="stylesheet" href="css/reveal.min.css">
+<link rel="stylesheet" href="css/theme/lightbend-training.css" id="theme">
+<link rel="stylesheet" href="lib/css/idea.css">
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+  if( window.location.search.match( /print-pdf/gi ) ) {
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'css/print/pdf.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  }
+</script>
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+
+<!-- ########################################################################################### -->
+<!-- BEGIN
+<!-- ########################################################################################### -->
+
+<!-- trainivator-slide-begin -->
+<section id="fast-track-to-akka-streams-with-scala" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Setup for Lightbend Akka Streams for Scala - Professional
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+
+<section id="introduction" class="content" data-markdown><script type="text/template">
+## Introduction
+
+- This document describes how to setup:
+  - The development environment
+  - The case study project
+- We recommend using the following tools:
+  - Eclipse or IntelliJ, both with Scala plugin
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+<section id="prerequisites" class="content" data-markdown><script type="text/template">
+## Prerequisites
+
+- This course is best suited for individuals that have knowledge
+  - Scala as covered in our [Lightbend Scala Language - Professional](http://www.lightbend.com/subscription/training) course
+  - Akka as covered in our [Lightbend Akka for Scala - Professional](http://www.lightbend.com/subscription/training) course
+- Software
+  - Java SDK 1.8 or higher
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+<section id="install-case-study" class="content" data-markdown><script type="text/template">
+## Install the Akkassembly Case Study
+
+- Unzip `LTS-P-lightbend-akka-for-scala-professional-exercises-<version>.zip` to your local disk
+- *cd* into the new `LTS-P-lightbend-akka-for-scala-professional-exercises-<version>` directory
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+<section id="install-sbt" class="content" data-markdown><script type="text/template">
+## Install SBT
+
+- Download and install SBT from the following location: http://www.scala-sbt.org/download.html
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+<section id="sbt-terminal" class="content" data-markdown><script type="text/template">
+## Make yourself familiar with SBT
+
+- Starting *SBT* takes you to an **interactive session**
+- If not already there, *cd* into the *LTS-P-lightbend-akka-for-scala-professional* directory and start SBT:
+
+```no-highlight
+LTS-P-lightbend-akka-for-scala-professional$ sbt
+...
+man [e] > akkassembly > initial-state >
+>
+```
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+
+<section id="man" class="content" data-markdown><script type="text/template">
+## man
+
+- The `man` command, short for manual, displays the setup instructions (what you are reading now) for the courseware
+- To view the instructions for the current exercise, use the `e` option
+- If you are using an IDE, you can also open up the setup instructions `README.md` file or the current exercises instructions `exercises/src/test/resources/README.md` file in your workspace
+
+```scala
+// display the setup instructions
+man [e] > akkassembly > initial-state > man
+
+// display the instructions for the current exercise
+man [e] > akkassembly > initial-state > man e
+```
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+
+<section id="run" class="content" data-markdown><script type="text/template">
+## run
+
+As part of each exercise, we use the `test` command to verify our behaviour.
+
+```scala
+man [e] > akkassembly > initial-state > test
+```
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sbt-commands" class="content" data-markdown><script type="text/template">
+## Summary of important SBT Commands
+
+- *exit* ends the sbt session
+- *help* lists the available commands
+- *compile* compiles the main sources
+- *test:compile* compiles the test and main sources
+- *test* runs tests after compiling the test and main sources
+- *console* starts the REPL with the project on the classpath
+- *run* looks for an application and runs it
+- *clean* deletes all output in the target directory
+- *reload* reloads the sbt session
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+<section id="setup-ide" class="content" data-markdown><script type="text/template">
+## Setup an IDE
+
+- We recommend to use one of the following IDEs
+  - IntelliJ IDEA
+  - Eclipse  
+</script></section>
+
+<!-- ########################################################################################### -->
+
+
+<section id="install-intellij" class="content" data-markdown><script type="text/template">
+## Install IntelliJ IDEA with Scala Plugin
+
+- Follow these instructions if you want to use IntelliJ IDEA
+- Download and install [IntelliJ 14 Community Edition](https://www.jetbrains.com/idea/download)
+- After starting IntelliJ IDEA use the plugin configuration to install the *Scala* plugin
+</script></section>
+
+<!-- ########################################################################################### -->
+
+
+<section id="open-project-intellij" class="content" data-markdown><script type="text/template">
+## Open Project in IntelliJ
+
+- To add the project in IntelliJ click on *Open*
+- Navigate into the *LTS-P-lightbend-akka-for-scala-professional* project and click on *Choose*
+- In the *Import Project from SBT* window select:
+  - Use auto-import
+  - Download sources and docs
+  - Download SBT sources and docs
+  - Java 1.8 as the *Project SDK*
+</script></section>
+
+<!-- ########################################################################################### -->
+
+
+<section id="install-eclipse-1" class="content" data-markdown><script type="text/template">
+## Install the Scala IDE for Eclipse I
+
+- Follow these instructions if you want to use Eclipse
+- You can download the prepackaged and preconfigured Scala IDE for your platform from [scala-ide.org/download/sdk.html](http://scala-ide.org/download/sdk.html)
+- You can also use your already installed Eclipse:
+    - Use the following update site to install the latest Scala IDE:
+    - Eclipse 4.4 (Luna): <nobr>[download.scala-ide.org/sdk/lithium/e44/scala211/stable/site](http://download.scala-ide.org/sdk/lithium/e44/scala211/stable/site)</nobr>
+    - Eclipse 3.8 - 4.3 (Juno and Kepler): <nobr>[download.scala-ide.org/sdk/lithium/e38/scala211/stable/site](http://download.scala-ide.org/sdk/lithium/e38/scala211/stable/site)</nobr>
+    - Select *Scala IDE for Eclipse* and *Scala IDE plugins*
+</script></section>
+
+<!-- ########################################################################################### -->
+
+
+<section id="install-eclipse-2" class="content" data-markdown><script type="text/template">
+## Install the Scala IDE for Eclipse II
+
+- Go to your *akkassembly* sbt console and run the command *eclipse with-source=true*
+```
+man [e] > akkassembly > initial-state > eclipse with-source=true
+...
+[info] Successfully created Eclipse project files for project(s)
+```
+
+- In Eclipse import the *akkassembly* project with <nobr>*Import... > General > Existing Projects into Workspace*</nobr>
+- On the *Import* page browse to the *LTS-P-lightbend-akka-for-scala-professional* folder
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="windows-tools" class="content" data-markdown><script type="text/template">
+## Install Optional Windows Tools]
+
+- If you use Windows, we recommend to install the following tools:
+  - [ConEmu](http://conemu.github.io/): Terminal with multi-tab support
+  - [Tail](http://tailforwin32.sourceforge.net/): Monitor log file changes
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+
+<section id="course-slide-deck" class="content" data-markdown><script type="text/template">
+## Course Materials
+
+- Now you should be all set with the development environment and the case study project
+- You can also open the [slides](index.html) locally and follow along during the course.
+</script></section>
+<!-- trainivator-slide-end -->
+
+
+<!-- ########################################################################################### -->
+<!-- END
+<!-- ########################################################################################### -->
+
+
+</div>
+</div>
+
+<script src="js/slide-validation.js"></script>
+<!-- TODO: Enable i18n.js if translation component has been implemented. -->
+<!-- <script src="js/i18n.js"></script> -->
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+<script>
+
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+    maxScale: 2.0,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+  });
+
+  Reveal.configure({
+    slideNumber: 'c / t'
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2072 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+
+<title>Lightbend Akka Streams for Scala - Professional</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link rel="stylesheet" href="css/reveal.min.css">
+<link rel="stylesheet" href="css/theme/lightbend-training.css" id="theme">
+<link rel="stylesheet" href="lib/css/idea.css">
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+  var link = document.createElement( 'link' );
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+  document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+
+<!-- ########################################################################################### -->
+<!-- BEGIN
+<!-- ########################################################################################### -->
+
+<section>  <!-- trainivator-hide -->
+
+<!-- trainivator-slide-begin -->
+<section id="lightbend-akka-streams-for-scala-professional" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Lightbend Akka Streams for Scala - Professional
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="course-overview" class="content" data-markdown><script type="text/template">
+## Course Overview
+
+- This one day course introduces experienced Akka developers to the Akka Streams API.
+
+- Akka Streams enables the consumption of streaming data, in a fully non-blocking, asynchronous manner.
+It also allows us to consume that data while providing non-blocking backpressure to prevent mailbox
+overflows.
+
+- Our goal is to learn the components that make up the Akka Streams API and how they interact. We will
+see a broad range of different Akka Streams components and have a chance to use many of them.
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="course-objectives" class="content" data-markdown><script type="text/template">
+## Course Objectives
+
+- After having participated in this course you should
+  - Understand the basic concepts of Akka Streams.
+  - Know how to build linear streams using Sources, Sinks, and Flows.
+  - Know how to implement fault tolerant streams.
+  - Know how to introduce non-linear graph shapes into your streams.
+  - Be confident to start using Akka Streams in production systems.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="course-prerequisites-1" class="content" data-markdown><script type="text/template">
+## Course Prerequisites I
+
+- Code examples and exercises will be written in Scala, so a basic knowledge of Scala is required.
+- We will leverage operations similar to those in the Scala collections API. Knowledge of the collections API is expected.
+- We will need concepts from Akka Actors. A basic knowledge of Actors, Dispatchers, and Mailboxes is required.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="course-prerequisites-2" class="content" data-markdown><script type="text/template">
+## Course Prerequisites II
+
+- To complete the exercises in this course, students need to install the following before class:
+  - JDK 8 or above
+  - Typesafe Activator or SBT
+  - Scala IDE or IntilliJ IDEA with Scala plugin
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="agenda" class="content" data-markdown><script type="text/template">
+## Agenda
+
+- AM
+  - [Introduction](#/introduction) <!-- .element: class="agendaItem" -->
+  - [Sources](#/sources) <!-- .element: class="agendaItem" -->
+  - [Sinks](#/sinks) <!-- .element: class="agendaItem" -->
+  - [Flows](#/flows) <!-- .element: class="agendaItem" -->
+- PM
+  - [Runnable Graphs](#/runnable-graphs) <!-- .element: class="agendaItem" -->
+  - [Fault Tolerance](#/fault-tolerance) <!-- .element: class="agendaItem" -->
+  - [Graphs](#/graphs) <!-- .element: class="agendaItem" -->
+  - [*Fusion*](#/fusion) <!-- .element: class="agendaItem" -->
+  - [Wrapping up](#/wrapping-up) <!-- .element: class="agendaItem" -->
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="Introductions" class="content" data-markdown><script type="text/template">
+## Introductions
+
+- Instructor Introduction
+
+- Student Introductions
+  - Your Name and Company
+  - Where you Live
+  - Your Job Role
+  - Any experience with Scala/Akka/Akka Streams?
+  - Do you meet the course prerequisites?
+  - What do you expect to get out of this class?
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="logistics" class="content" data-markdown><script type="text/template">
+## Class Logistics
+
+- General
+  - Start and end times
+  - Breaks and lunch
+  - Topics not on the agenda
+  - Setup completed
+  - Outside Business
+
+- For classroom courses:
+  - Room availability
+  - Food
+  - Restrooms
+  - Fire exits
+  - Local amenities
+
+</script></section>
+
+</section>  <!-- trainivator-hide -->
+
+<!-- ########################################################################################### -->
+<!-- Introduction
+<!-- ########################################################################################### -->
+
+
+<section>  <!-- trainivator-hide -->
+
+
+<section id="introduction" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Introduction
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="what-are-streams" class="content" data-markdown><script type="text/template">
+## What are Streams?
+
+- Streams are sequences of data, divided up into individual elements.
+- The Size of the stream may not be known, or may be infinite.
+- Often streams are too large to fit in memory.
+- Examples
+  - Twitter "firehose" of Tweets
+  - Live video streams
+  - Data from a fitness tracker
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="use-cases-for-streams" class="content" data-markdown><script type="text/template">
+## Use Cases for Streams
+
+- Consuming live events (eg. Tweets)
+- ETL systems (Extract, Transform, Load)
+- Streaming media (audio, video)
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="reactive-streams" class="content" data-markdown><script type="text/template">
+## Reactive Streams
+
+<blockquote>Reactive Streams is an initiative to provide a standard for asynchronous stream processing with non-blocking back pressure. This encompasses efforts aimed at runtime environments (JVM and JavaScript) as well as network protocols.</blockquote>
+<small>[Reactive Streams](http://www.reactive-streams.org/)</small>
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="why-reactive-streams" class="content" data-markdown><script type="text/template">
+## Why Reactive Streams
+
+- How can we consume a stream of data in an asynchronous fashion?
+- How can we prevent an asynchronous stream from overwhelming a slow consumer?
+- How can we maintain ordering guarantees even while processing things asynchronously?
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="reactive-streams-components" class="content" data-markdown><script type="text/template">
+## Reactive Streams Components
+
+- Publisher - Publishes data into the stream
+- Subscriber - Consumes data from the stream
+- Processor - Acts as both a publisher and a subscriber, obeying the contract for each.
+- Subscription - Connects a Subscriber to a Publisher in order to initiate the message flow.
+
+Note: 
+- Reactive Streams provides "rules" for how these components interact.
+- Eg. A Publisher is forbidden from sending data downstream until demand has been signaled.
+- When working with Akka Streams, we do not normally need to concern ourselves with these.
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="backpressure" class="content" data-markdown><script type="text/template">
+## Backpressure
+
+![Backpressure](images/backpressure.png "Backpressure")
+
+- Backpressure implemented using a pull/push mechanism.
+- Subscribers signal demand. Demand is sent upstream via subscription.
+- Publishers receive demand and push data (if available) downstream.
+- Publishers are forbidden from pushing more than the demand.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="reactive-streams-and-akka-streams" class="content" data-markdown><script type="text/template">
+## Akka Streams Relationship to Reactive Streams
+
+- Akka Streams is built on the concepts and interfaces of Reactive Streams but provides an API that is geared towards end-users.
+- Exposes some points for interoperability between Reactive Streams and Akka Streams.
+- More Reactive Streams Implementations: https://en.wikipedia.org/wiki/Reactive_Streams
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="akka-streams-and-akka-actors" class="content" data-markdown><script type="text/template">
+## Akka Streams Relationship to Akka Actors
+
+- Actors consume streams of data in the form of messages.
+- It can be tedious and error prone to implement streams with backpressure between actors manually.
+- Akka Streams provides a higher level api for stream processing, backed by akka actors.
+- Akka streams provide statically typed guarantees that prevent wiring errors.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="what-is-an-akka-stream" class="content" data-markdown><script type="text/template">
+## What is an Akka Stream?
+
+- Data flows through a chain of processing stages.
+- Stages consist of zero or more inputs and zero or more outputs.
+- Stages must have at least one input or output.
+- By default stages are fused together to run synchronously inside a single actor (More on fusion later), but can be made to run asynchronously in separate actors.
+
+NOTE:
+- This is a simplification.
+- GraphStages contain Shapes. The shapes define the inputs/outputs. The GraphStage defines the logic of how to move data through the shape.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="linear-streams" class="content" data-markdown><script type="text/template">
+## Linear Streams
+
+![Linear Streams](images/simplestream.png "Linear Streams")
+
+- Sources - The “source” of the data in the stream.
+- Sinks - The “destination” for the data in the stream.
+- Flows - Transformations to the data in the stream.
+- Runnable Graphs - A stream where all inputs and outputs are connected.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="linear-streams-2" class="content" data-markdown><script type="text/template">
+## Linear Streams II
+
+![Linear Streams](images/simplestream.png "Linear Streams")
+
+- Each stage in the stream can be executed synchronously or asynchronously.
+- In most cases, element order is preserved.
+- Backpressure is propagated from downstream stages to upstream.
+- Linear Streams are often sufficient for most use cases.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="graphs-intro" class="content" data-markdown><script type="text/template">
+## Graphs
+
+![Graphs](images/graph.png "Graphs")
+
+- Junctions - Branch points in the stream (eg. fan-in, fan-out).
+- Graphs allow us to build complex flows of data with multiple inputs and outputs.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="simple-stream" class="content" data-markdown><script type="text/template">
+## A Simple Stream
+
+``` scala
+Source(1 to 10)
+  .via(Flow[Int].map(_ * 2))
+  .to(Sink.foreach(println))
+  .run
+```
+- The Source emits the numbers 1 to 10.
+- The Flow multiplies each number by 2.
+- The Sink then prints each resulting value.
+- Running this will produce the numbers 2,4,6...20 one per line.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="graph-stages-are-templates" class="content" data-markdown><script type="text/template">
+## Graph Stages are Templates
+
+- Sources/Flows/Sinks/Junctions are immutable, re-useable templates.
+- They contain instructions on how to produce/transform/consume data.
+- By themselves they do nothing.
+- In order to start the flow of data, the graph must first be materialized.
+
+NOTE:
+- Think of an assembly line.
+- The people working the line know how to do the job at their station.
+- They have the instructions.
+- If they are not on the line, then those instructions are meaningless.
+- The instructions only become meaningful when the people are assigned to the assembly line.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="materialization-intro" class="content" data-markdown><script type="text/template">
+## Materialization
+
+``` scala
+implicit val materializer = ActorMaterializer()
+```
+
+- Materialization is the act of allocating resources to the stream.
+- Occurs when all stages in the stream are connected and the stream is run.
+- Running the stream results in Materialized Values being produced.
+- Each stage is capable of producing a single Materialized Value.
+- Materialized Values are separate from the elements being produced/transformed/consumed by the stage.
+- An implicit Materializer is required.
+- More on this later.
+
+NOTE:
+- Resources could include files, threads etc.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercises-materialization" class="content" data-markdown><script type="text/template">
+## Materialized Values in the Exercises
+
+- Throughout the exercises we will be creating various graph stages (sources, sinks, flows).
+- Typically we will use `NotUsed` for a materialized value.
+- NotUsed indicates that the materialized value is not important in this stage.
+- Exceptions to this are Sinks where we may actually be interested in the resulting value.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="case-study-akkassembly" class="content" data-markdown><script type="text/template">
+## Case Study: Akkassembly
+
+ <!-- http://publicdomainvectors.org/en/free-clipart/Car-manufacturing-vector-illustration/3619.html -->
+![Akkassembly](images/akkassembly.png "Akkassembly")
+
+- We will model a simple automobile factory.  Our factory will receive parts, assemble cars, paint them, and finally run them through an inspection.
+- Our job will be to build the stream components necessary to create the Akkassembly factory.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="working-on-exercises" class="content" data-markdown><script type="text/template">
+## Working on Exercises
+
+- `man e` - Displays current exercise instructions.
+- `showExerciseID` - Displays the current exercise name.
+- `nextExercise` - Brings new tests and instructions into scope, while preserving your code.
+- `prevExercise` - Reverts tests and instructions to the previous state, while preserving your code.
+- `pullSolution` - Overwrites your code with the official solution.
+- `saveState` - Create a snapshot of your current code.
+- `restoreState <exercise Id>` - Restore the code from a saved snapshot.
+- `savedStates` - List all saved states.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-00-diagram" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Group Exercise
+
+![Exercise 00](images/exercise-00.png "Exercise 00")
+
+</script></section>
+    
+<!-- ########################################################################################### -->
+
+<section id="exercise-00" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Group Exercise
+
+- We will build up each stage in the pipeline over the course of several exercises.
+- Start by reviewing the provided code as a group.
+
+Note:
+- Look at existing domain classes
+- Talk about where to put user code (in the excercises folder)
+
+</script></section>
+
+</section> <!-- trainivator-hide -->
+
+<!-- ########################################################################################### -->
+<!-- Sources
+<!-- ########################################################################################### -->
+
+<section>  <!-- trainivator-hide -->
+
+
+<section id="sources" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Sources
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source" class="content" data-markdown><script type="text/template">
+## Source
+
+![Source](images/source.png "Source")
+
+- A `Source` is a stage with a single output.
+- Think of it as an input to a stream.
+- Could be receiving data from a file, a database, a REST API, collection etc.
+- Amount of data in the Source is not predetermined. It may be infinite.
+- Defined as `Source[+Out, +Mat]`
+  - `Out` defines the type of the elements that the Source produces.
+  - `Mat` defines the type of the materialized value.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-demand" class="content" data-markdown><script type="text/template">
+## Demand in Sources
+
+![Source Demand](images/source-demand.png "Source Demand")
+
+- Sources receive Demand from downstream.
+- A Source can push data downstream, as long as there is demand.
+- If there is no demand, then the source is forbidden from pushing data.
+- The source will have to deal with incoming data until demand resumes.
+
+NOTE:
+- Depending on the source, it may mean buffering or dropping, or it may simply mean slowing consumption.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-messages" class="content" data-markdown><script type="text/template">
+## Messages in Sources
+
+- Sources respond to demand in an `onPull` handler.
+- May also respond to `onDownstreamFinish`
+- In response to an onPull request, the Source may:
+  - `push` data downstream.
+  - `complete` the stream with a success.
+  - `fail` the stream with an error.
+  - Do nothing.
+- This logic is implemented for a variety of different sources.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-empty" class="content" data-markdown><script type="text/template">
+## Empty Sources
+
+``` scala
+val source: Source[String, NotUsed] = Source.empty[String]
+```
+
+- empty
+  - Creates an empty Source of the specified type.
+  - Always *complete* the stream.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-single-and-repeat" class="content" data-markdown><script type="text/template">
+## Sources from single elements
+
+``` scala
+val source: Source[String, NotUsed] = Source.single(
+  “Hello World”
+)
+```
+``` scala
+val source: Source[String, NotUsed] = Source.repeat(
+  “Hello World”
+)
+```
+
+- single
+  - Create a Source with a single arbitrary element.
+  - *Push* a single element and then *complete*.
+- repeat
+  - Similar to Source.single but the same element is infinitely *pushed* whenever there is demand.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-single-and-repeat-and-tick" class="content" data-markdown><script type="text/template">
+## Sources from single elements II
+
+``` scala
+val source: Source[String, Cancellable] = Source.tick(
+    initialDelay = 1.second, 
+    interval = 5.seconds, 
+    tick = "Hello World"
+  )
+```
+
+- tick
+  - Similar to Source.repeat except the element is *pushed* on a time schedule.
+  - If there is no demand (i.e. backpressure), no tick will be *pushed*. That tick will be lost.
+  
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-apply" class="content" data-markdown><script type="text/template">
+## Sources from Iterables
+
+``` scala
+val source: Source[Int, NotUsed] = Source(1 to 10)
+```
+
+- Creates a Source from a `collection.immutable.Iterable`.
+- Elements are taken from the `Iterable` and *pushed* downstream whenever there is demand.
+- The stream is *completed* if there is no more data in the `Iterable`
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-from-iterator-and-cycle" class="content" data-markdown><script type="text/template">
+## Sources from Iterators
+
+``` scala
+val source: Source[Int, NotUsed] = Source.fromIterator { 
+  () => Iterator.from(0) 
+}
+```
+``` scala
+val source: Source[Int, NotUsed] = Source.cycle { 
+  () => Iterator.range(1, 10)
+}
+```
+
+- fromIterator
+  - Creates a source from an Iterator.
+  - The Iterator is created each time the Source is materialized.
+  - *Pushes* elements from the iterator whenever there is *demand*.
+  - *Completes* when `hasNext` returns false.
+- cycle
+  - Similar to fromIterator, but the iterator is infinitely repeated.
+  - When `hasNext` returns false, the Iterator is recreated and consumed again.
+
+NOTE:
+- Functions are used to return the Iterator in order to allow that Iterator to be consumed multiple times.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-unfold" class="content" data-markdown><script type="text/template">
+## Stateful Sources
+
+``` scala
+val countTo100: Source[Int, NotUsed] = Source.unfold(0) {
+  case value if value <= 100 => Some((value+1, value))
+  case _ => None
+}
+```
+
+- unfold
+  - Uses an initial value and a transformation function.
+  - The transformation function returns an Option of a tuple containing the value for the next iteration, and the value to *push*.
+  - *Completes* when the transformation function returns None
+- unfoldAsync
+  - Similar to unfold, but the function returns a Future of an Option
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-actorref" class="content" data-markdown><script type="text/template">
+## Sources from Actors
+
+``` scala
+case class Message(value: String)
+val source: Source[Message, ActorRef] = 
+  Source.actorRef[Message](
+      bufferSize = 10, 
+      overflowStrategy = OverflowStrategy.dropNew
+  )
+```
+
+- actorRef
+  - Creates a Source that is materialized as an ActorRef
+  - Messages sent to the ActorRef will be *pushed* to the stream or buffered until there is *demand*.
+  - *Completes* by sending the actor a `akka.actor.Status.Success` or `akka.actor.PoisonPill`.
+  - bufferSize - Determines the maximum capacity of the buffer
+  - overflowStrategy - Determines what to do if the buffer overflows
+
+NOTE:
+- akka.actor.Status.Success - Completes after draining the buffer.
+- akka.actor.PoisonPill - Completes immediately without draining the buffer.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-from-files" class="content" data-markdown><script type="text/template">
+## Sources from files
+
+``` scala
+val byteSource: Source[ByteString, Future[IOResult]] = 
+  FileIO.fromPath(
+    Paths.get("src/main/resources/logfile.txt"),
+    chunkSize = 1024
+  )
+```
+
+- FileIO.fromPath
+  - Create a source of ByteString from a file using a thread-pool backed dispatcher dedicated for FileIO
+  - Pulls data from the file and *pushes* it downstream whenever there is *demand*
+  - *Completes* when the end of the file is reached.
+  - Use the Framing API and a decoder to parse ByteStrings into lines of text
+
+NOTE:
+- FileIO.fromFile, taking a Java.io.File is deprecated
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-from-tcp" class="content" data-markdown><script type="text/template">
+## Sources from TCP connections
+
+``` scala
+val connections: 
+  Source[IncomingConnection, Future[ServerBinding]] = 
+    Tcp().bind("127.0.0.1", 8888)
+```
+
+- Tcp().bind
+  - Create a source from a TCP Connection
+  - Each time a client connects, a new Connection will be emitted to the stream.
+  - Connection can be processed by attaching a Flow to the Connection.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="source-from-java-streams" class="content" data-markdown><script type="text/template">
+## Sources From Java streams
+
+``` scala
+val source: Source[ByteString, Future[IOResult]] = 
+  StreamConverters.fromInputStream { () => 
+    new FileInputStream("myFile.txt")
+  }
+```
+
+- StreamConverters.fromInputStream
+  - Creates a Source from a Java Input Stream
+  - Pulls data from the input stream and *pushes* it downstream when there is demand.
+  - *Completes* if the input stream completes.
+  - StreamConverters provide a variety of Sources that will allow interop with Java IO.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-01-diagram" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 1 - Working with Sources
+
+![Exercise 01](images/exercise-01.png "Exercise 01")
+
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-01-instructions" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 1 - Working with Sources
+
+- To build a car, we require various components. In this exercise we will begin by creating Sources of the components that we will to build our car.
+  - Start an sbt session.
+  - Make sure your prompt is:
+  ``` scala 
+  man [e] > akkassembly > working-with-sources >
+  ```
+  - use the man e command to see the instructions. 
+
+</script></section>
+
+</section>  <!-- trainivator-hide -->
+
+<!-- ########################################################################################### -->
+<!-- Sinks
+<!-- ########################################################################################### -->
+
+<section>  <!-- trainivator-hide -->
+
+<section id="sinks" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Sinks
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink" class="content" data-markdown><script type="text/template">
+## Sink
+
+![Sink](images/sink.png "Sink")
+
+- A Sink is a stage with a single input.
+- You can think of it as the output of the stream.
+- Could be writing data to a file, database, REST API, collection etc.
+- Sinks create backpressure by controlling Demand.
+- defined as `Sink[-In, +Mat]`
+  - `In` defines the type of the elements the Sink consumes.
+  - `Mat` defines the type of the materialized value.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-demand" class="content" data-markdown><script type="text/template">
+## Demand in Sinks
+
+![Sink Demand](images/sink-demand.png "Sink Demand")
+
+- Sinks send Demand upstream.
+- A Sink should only send Demand when it is ready to receive more data.
+- If a Sink can not keep up with incoming data, demand will stop and the data flow will cease.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-messages" class="content" data-markdown><script type="text/template">
+## Messages in Sinks
+
+- Sinks respond to new data in an `onPush` handler.
+- May also respond to `onUpstreamFinish` or `onUpstreamFailure`.
+- In response to an onPush request, the Sink may:
+  - request new data from upstream using `pull`
+  - `grab` any data that has already been pushed.
+  - `cancel` the stream causing it to terminate.
+- This logic is implemented for a variety of different sinks.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-ignore" class="content" data-markdown><script type="text/template">
+## Sinks that ignore elements
+
+``` scala
+val ignore: Sink[Any, Future[Done]] = Sink.ignore
+```
+
+- ignore
+  - *Pulls* all elements in the stream and discards them without processing.
+  - Quiz: Why is there no Type Parameter for ignore?
+
+NOTE:
+- Quiz Answer: No type parameter is required since nothing is processed or returned.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-foreach" class="content" data-markdown><script type="text/template">
+## Sinks with no materialized value
+
+``` scala
+val sink: Sink[Int, Future[Done]] = 
+  Sink.foreach[Int](i => println(s"Value: $i"))
+```
+
+- foreach
+  - *Pulls* elements from the stream and executes a block of code on each.
+  - Executed purely for side effects.
+  - No value is returned.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-head-and-last" class="content" data-markdown><script type="text/template">
+## Sinks that materialize a single element
+
+``` scala
+val head: Sink[Int, Future[Int]] = Sink.head[Int]
+```
+``` scala
+val last: Sink[Int, Future[Int]] = Sink.last[Int]
+```
+``` scala
+val headOption: Sink[Int, Future[Option[Int]]]
+  = Sink.headOption[Int]
+```
+``` scala
+val lastOption: Sink[Int, Future[Option[Int]]] 
+  = Sink.lastOption[Int]
+```
+
+- head/last
+  - *Pulls* until it finds the first or last element in the stream and materializes it.
+  - Fails with NoSuchElementException if the stream is empty.
+- headOption/lastOption
+  - Similar to head/last except it returns None if the stream is empty.
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-seq" class="content" data-markdown><script type="text/template">
+## Sinks that materialize all elements
+
+``` scala
+val toSeq: Sink[Int, Future[Seq[Int]]] = Sink.seq[Int]
+```
+
+- seq
+  - *Pulls* all elements in the stream and populates a sequence.
+  - Materializes the sequence through a Future that completes when the stream completes.
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-fold" class="content" data-markdown><script type="text/template">
+## Stateful Sinks with a materialized value
+
+``` scala
+val foldSum: Sink[Int, Future[Int]] = 
+  Sink.fold[Int, Int](0) {
+    case (sum, elem) => sum + elem
+  }
+
+val reduceSum: Sink[Int, Future[Int]] =
+  Sink.reduce[Int] {
+    case (sum, elem) => sum + elem
+  }
+
+```
+
+- fold
+  - *Pull* the elements of the stream and Fold them into a single element.
+  - Requires an initial value for the first iteration.
+  - The result of the fold is encapsulated in the materialized value.
+- reduce
+  - Similar to `fold`
+  - The first element is used as the initial value.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-actorref" class="content" data-markdown><script type="text/template">
+## Sinks from Actors
+
+``` scala
+case object PrintSum
+val sumActor = system.actorOf(Props(
+  new Actor with ActorLogging {
+    private var sum = 0
+    override def receive: Receive = {
+      case value: Int => sum += value
+      case PrintSum => log.info(sum.toString)
+    }
+  }
+))
+val computeSum: Sink[Int, NotUsed] = 
+  Sink.actorRef[Int](sumActor, onCompleteMessage = PrintSum)
+```
+
+- actorRef
+  - *Pulls* all elements in the stream and sends them to a provided ActorRef
+  - When the stream completes it will send the onCompleteMessage to the actor
+  - No backpressure mechanism is provided. Beware of mailbox overflow.
+  - actorRefWithAck can provide backpressure
+
+NOTE:
+- In the absence of backpressure rate limiting stages up stream can help.
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-to-files" class="content" data-markdown><script type="text/template">
+## Sinks to files
+
+``` scala
+val writeToFile: Sink[ByteString, Future[IOResult]] = 
+  FileIO.toPath(Paths.get("myfile.txt"))
+```
+
+- FileIO.toPath
+  - *Pulls* `ByteStrings` from upstream and write them to a file.
+
+NOTE:
+- Earlier stages must first convert elements to ByteStrings
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="sink-to-java-streams" class="content" data-markdown><script type="text/template">
+## Sinks to Java streams
+
+``` scala
+val writeToJavaStream: Sink[ByteString, Future[IOResult]] = 
+  StreamConverters.fromOutputStream(() =>
+    new FileOutputStream("myfile.txt"))
+```
+
+- `StreamConverters.fromOutputStream`
+  - Creates a Sink from a Java `OutputStream`
+  - *Pulls* `ByteStrings` from upstream and writes them to the `OutputStream`
+  - `StreamConverters` provide a variety of Sinks that will allow interop with Java IO.
+
+NOTE:
+- Earlier stages must first convert elements to ByteStrings
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-02-diagram" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 2 - Working with Sinks
+
+![Exercise 02](images/exercise-02.png "Exercise 02")
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-02-instructions" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 2 - Working with Sinks
+
+- In this exercise we will introduce an auditor who has the job of monitoring our assembly line. This will require the creation of a few Sinks.
+  - Start an sbt session.
+  - Make sure your prompt is:
+  ``` scala 
+  man [e] > akkassembly > working-with-sinks >
+  ```
+  - use the man e command to see the instructions. 
+
+</script></section>
+
+</section>  <!-- trainivator-hide -->
+
+<!-- ########################################################################################### -->
+<!-- Flows
+<!-- ########################################################################################### -->
+
+<section>  <!-- trainivator-hide -->
+
+<section id="flows" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Flows
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow" class="content" data-markdown><script type="text/template">
+## Flow
+
+![Flow](images/flow.png "Flow")
+
+- A flow is a graph stage with a single input and a single output.
+- Used to move data from a Source into a Sink, manipulating that data in some way (transforming, filtering etc)
+- A flow acts as both a Source and a Sink, obeying the rules for both.
+- Defined as `Flow[-In, +Out, +Mat]`
+  - `In` defines the type of the elements that the Flow consumes.
+  - `Out` defines the type of the elements that the Flow produces.
+  - `Mat` defintes the type of the materialized value.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-demand" class="content" data-markdown><script type="text/template">
+## Demand in Flows
+
+![Flow Demand](images/flow-demand.png "Flow Demand")
+
+- A flow receives demand from downstream and propagates it upstream.
+- Like a Source, if there is no downstream demand, the flow must stop.
+- Flows can propagate backpressure upstream by reducing or stopping demand.
+- Alternatively Flows can drop data, buffer data etc.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-messages" class="content" data-markdown><script type="text/template">
+## Messages in Flows
+
+- A Flow is both a consumer and a producer.
+- It uses the message flow of both Source and Sink.
+- In may respond to both `onPush` and `onPull`.
+- It responds with the same messages as Source and Sink.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-map-mapasync-mapasyncunordered" class="content" data-markdown><script type="text/template">
+## Flows to map elements
+
+``` scala
+val double: Flow[Int, Int, NotUsed] = 
+  Flow[Int].map(_ * 2)
+```
+``` scala
+val double = Flow[Int].mapAsync(parallelism = 4) { i => 
+  Future { i * 2 }
+}
+```
+- map
+  - Transforms the stream by applying the given function to each element.
+- mapAsync
+  - Accepts a function that returns a future but still guarantees ordering.
+  - parallelism defines the amount of parallelism to use when resolving the futures.
+- mapAsyncUnordered
+  - Accepts a function that returns a future and does not guarantee ordering.
+
+NOTE:
+- For mapAsync, if the beginning elements in the stream are slower to process, they can block potentially faster elements later in the stream.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-mapconcat" class="content" data-markdown><script type="text/template">
+## Flows to flatten elements
+
+``` scala
+val words: Flow[String, String, NotUsed] = 
+  Flow[String].mapConcat(str => str.split("\\s").toVector)
+```
+
+- mapConcat
+  - Transforms data into a collection that is “flattened” into the stream.
+  - Similar to a flatMap on a collection. 
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-grouped-sliding" class="content" data-markdown><script type="text/template">
+## Flows to group elements
+
+``` scala
+val groupsOf10: Flow[Int, Seq[Int], NotUsed] = 
+  Flow[Int].grouped(10)
+```
+``` scala
+val slidingWindowOf10: Flow[Int, Seq[Int], NotUsed] = 
+  Flow[Int].sliding(10, step = 1)
+```
+
+- grouped
+  - Groups elements in the stream into fixed size batches
+- sliding
+  - Creates a sliding window over the elements in the stream
+
+NOTE:
+- A group of 10 would return 1-10 as a seq, followed by 11-20, then 21-30 etc.
+- A sliding window of 10 would return 1-10 as a seq, followed by 2-11, then 3-12 etc.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-fold-scan" class="content" data-markdown><script type="text/template">
+## Stateful Flows
+
+``` scala
+val computeSum: Flow[Int, Int, NotUsed] = 
+  Flow[Int].fold(0) {
+   case (sum, value) => sum + value
+  }
+```
+``` scala
+val accumulate: Flow[Int, Int, NotUsed] = 
+  Flow[Int].scan(0) {
+   case (accumulator, value) => accumulator + value
+  }
+```
+
+- fold
+  - Allows a stateful transformation by passing previous state into the next iteration.
+  - Fold will only emit the result when the upstream completes.
+- scan
+  - Allows for stateful transformations by passing previous state into the next iteration.
+  - Unlike fold, scan will emit each new computed result.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-filter-collect" class="content" data-markdown><script type="text/template">
+## Flows to filter elements
+
+``` scala
+val oddNumbers: Flow[Int, Int, NotUsed] = 
+  Flow[Int].filter(_ % 2 == 1)
+```
+``` scala
+val evenNumbers: Flow[Int, Int, NotUsed] = 
+  Flow[Int].collect {
+   case x if x % 2 == 0 => x
+  }
+```
+
+- filter
+  - Filter elements in/out of the stream
+- collect
+  - Apply a partial function to elements in the stream.  
+  - Matched elements are transformed by the function.
+  - Unmatched elements are dropped.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-takeWithin-dropWithin-groupedWithin" class="content" data-markdown><script type="text/template">
+## Flows to limit elements by time
+
+``` scala
+val oneSecondOfData: Flow[Int, Int, NotUsed] = 
+  Flow[Int].takeWithin(1.second)
+```
+``` scala
+val skipOneSecondOfData: Flow[Int, Int, NotUsed] = 
+  Flow[Int].dropWithin(1.second)
+```
+``` scala
+val groupBySecond: Flow[Int, Seq[Int], NotUsed] = 
+  Flow[Int].groupedWithin(10, 1.second)
+```
+
+- takeWithin
+  - Take elements from the stream for the given duration, then terminate.
+- dropWithin
+  - Drop data for the specified period of time, then proceed with the rest.
+- groupedWithin
+  - Group Elements by the given number or time period, whichever comes first.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-zip" class="content" data-markdown><script type="text/template">
+## Flows to combine Sources
+
+``` scala
+val zipWithIndex: Flow[String, (String, Int), NotUsed] = 
+  Flow[String].zip {
+    Source.fromIterator(() => Iterator.from(0))
+  }
+```
+
+- zip
+  - Combine the incoming elements with elements from another Source.
+  - Result is emitted as a tuple of both values.
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-flatmapconcat-flatmapmerge" class="content" data-markdown><script type="text/template">
+## Flows to flatten Sources
+
+``` scala
+val double: Flow[Int, Int, NotUsed] = 
+  Flow[Int].flatMapConcat(i => Source(Iterable(i, i)))
+```
+```
+val double: Flow[Int, Int, NotUsed] = 
+  Flow[Int].flatMapMerge(
+    breadth = 2,
+    i => Source(Iterable(i, i))
+  )
+```
+
+- flatMapConcat
+  - Similar to mapConcat, but operates on Sources, rather than Iterables.
+  - Transforms data into a collection that is “flattened” into the stream.  Substreams are consumed in sequence which preserves ordering.
+
+- flatMapMerge
+  - Like mapConcat, but Substreams are consumed simultaneously.  Order therefore is not guaranteed.
+  - Breadth indicates how many substreams to consume at a time.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-buffer" class="content" data-markdown><script type="text/template">
+## Flows to buffer elements
+
+``` scala
+val flow: Flow[Int, Int, NotUsed] = 
+  Flow[Int].buffer(100, OverflowStrategy.backpressure)
+```
+
+- buffer
+  - Buffers incoming elements in order to smooth out inconsistencies in flow rate.
+  - Includes various overflow strategies including:
+    - backpressure - Applies normal backpressure when the buffer is full.
+    - dropHead - Drops the oldest element in the buffer to make room for new elements.
+    - dropTail - Drops the newest element in the buffer to make room for new elements.
+    - dropNew - Drops the new element leaving the buffer unchanged.
+    - dropBuffer - Drops all elements in the buffer to make room for new elements.
+    - fail - Stream completes with a failure.
+
+NOTE:
+- Works best in cases where you have multiple cpu intensive stages with an inconsistent async source.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-expand-batch-conflate" class="content" data-markdown><script type="text/template">
+## Flows for slow consumers/producers
+
+- expand 
+  - extrapolates additional values from the incoming elements to fill gaps when the consumer is faster than the producer.
+- batch
+  - groups elements into a batch to be consumed downstream if the producer is faster than the consumer.
+- conflate
+  - create a summary of multiple elements to be consumed downstream if the producer is faster than the consumer.
+
+NOTE:
+- Example of expand - TimeSeries database, using the last value as the current in the absence of new data.
+- Example of batch - Grouping multiple database writes into a single write to improve database performance.
+- Example of conflate - Rather than keep every element, you could keep a running average or a running total of elements that have been “conflated”.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="flow-log" class="content" data-markdown><script type="text/template">
+## Flows to log elements
+
+``` scala
+implicit val loggingAdapter = system.log
+val log: Flow[Int, Int, NotUsed] = Flow[Int].log("name")
+```
+
+- log
+  - Write the elements in the stream to a log while passing them to the next stage. 
+  - A provided name is included in each log statement.
+  - Optionally, an extract function can be provided that can extract information from the element to be logged.
+  - Requires an implicit logging adapter
+  - By default, elements are logged on debug level, but can be configured using `withAttributes`.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="convenience-methods-on-source" class="content" data-markdown><script type="text/template">
+## Convenience Methods on Source
+
+``` scala
+Source(1 to 10).map(_ * 2)
+```
+
+- For convenience, the tranformations available in a Flow are also available on a Source.
+- Methods such as `map`, `filter` etc. can be called directly on the Source.
+- This applies the appropriate Flow to that Source returning a new Source.
+
+NOTE:
+- Under the hood this creates a flow and attaches the flow to the Source.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-03-diagram" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 3 - Working with Flows
+
+![Exercise 03](images/exercise-03.png "Exercise 03")
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-03-instructions" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 3 - Working with Flows
+
+- In this exercise we will begin assembling our cars. We will create a variety of Flows that add our components into our cars in order to move them towards a completed state.
+  - Start an sbt session.
+  - Make sure your prompt is:
+  ``` scala 
+  man [e] > akkassembly > working-with-flows >
+  ```
+  - use the man e command to see the instructions. 
+
+</script></section>
+
+</section>  <!-- trainivator-hide -->
+
+<!-- ########################################################################################### -->
+<!-- Runnable Graphs
+<!-- ########################################################################################### -->
+
+<section>  <!-- trainivator-hide -->
+
+<section id="runnable-graphs" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Runnable Graphs
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="runnable-graph" class="content" data-markdown><script type="text/template">
+## Runnable Graph
+
+![Stream](images/stream.png "Stream")
+
+- Sources, Sinks, and Flows don’t do anything by themselves.  They are merely templates.
+- In order to initiate the flow of data you must connect all inputs and outputs in the Source/Sink/Flows.  This creates a Runnable Graph.
+- Once a Runnable Graph is created, the data can start flowing.
+
+NOTE: 
+- This allows us to create reusable templates that can leveraged in multiple places.
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="building-graphs-1" class="content" data-markdown><script type="text/template">
+## Building Runnable Graphs I
+
+``` scala
+val mat: NotUsed = Source(1 to 10)
+  .via(Flow[Int].map(_ * 2))
+  .to(Sink.foreach(println))
+  .run()
+```
+
+- A RunnableGraph can be created simply using the `via` and `to` methods on a Source.
+  - `via` connects a Flow to the Source and returns a new Source
+  - `to` connects a Sink to the Source  and returns a RunnableGraph.
+- A RunnableGraph can be executing using the `run` method.
+  - This returns the materialized value of the graph.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="building-graphs-2" class="content" data-markdown><script type="text/template">
+## Building Runnable Graphs II
+
+``` scala
+val sink: Sink[Any, Future[Done]] = 
+  Sink.foreach[Any](println)
+
+val flow: Flow[String, Seq[String], NotUsed] = 
+  Flow[String].map(_.split(" "))
+
+val newFlow: Flow[String, String, NotUsed] = 
+  flow.via(Flow[Seq[String]].map(_.mkString(",")))
+
+val newSink: Sink[String, NotUsed] = 
+  flow.to(sink)
+```
+
+- `via` and `to` can also be run on a Flow.
+  - `via` connects a Flow to another Flow and returns a new Flow
+  - `to` connects a Flow to a Sink and returns a new Sink.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="materialization" class="content" data-markdown><script type="text/template">
+## Materialization
+
+- Materialization is the act of allocating the necessary resources to run the stream.
+- Materialization occurs when terminal operations are performed on the stream.
+- Terminal operations include run, runWith etc.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="materialized-values" class="content" data-markdown><script type="text/template">
+## Materialized Values
+
+- Each stage in the stream is capable of producing a *Materialized Value*.
+- The materialized value is the result of materializing the stage.
+- Materialized values are passed to the next stage. It is up to the user to determine how to use them in that stage.
+- The materialized value is returned when the stream is run (not when it completes).
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="accessing-materialized-values" class="content" data-markdown><script type="text/template">
+## Accessing Materialized Values
+
+``` scala
+  val source = Source.tick(1.second, 1.second, "Hello World")
+  val sink = Sink.foreach[Any](println)
+  val flow = Flow[String].map(_.split(" "))
+
+  val matSource: Cancellable =
+    source.to(sink).run()
+  val matFlow: NotUsed =
+    source.viaMat(flow)(Keep.right).to(sink).run()
+  val matSink: Future[Done] =
+    source.toMat(sink)(Keep.right).run()
+```
+
+- `to` materializes the value from the stage it is called on.
+- `toMat` allows you to transform/combine the materialized values.
+  - `toMat` accepts a `Sink` and a function to combine materialized values.
+  - `Keep` includes predefined functions for `both`, `left`, `right`.
+- `viaMat` similar to `toMat` but operates on a Flow instead of a Sink
+- `run` executes the `RunnableGraph` and returns the materialized value
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="shortcuts" class="content" data-markdown><script type="text/template">
+## Shortcuts
+
+``` scala
+Source(1 to 10).runWith(Sink.foreach(println))
+Source(1 to 10).runForeach(println)
+val sumFold: Future[Int] = Source(1 to 10).runFold(0)(_ + _)
+val sumReduce: Future[Int] = Source(1 to 10).runReduce(_ + _)
+```
+
+- `runWith` attaches the supplied `Sink` and runs the graph.
+- `runForeach` creates and runs a Sink.foreach on the Source.
+- `runFold` creates and runs a Sink.fold on the Source.
+- `runReduce` creates and runs a Sink.reduce on the Source.
+- Each returns the materialized value from the Sink.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-04-diagram" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 4 - Building Streams
+
+![Exercise 04](images/exercise-04.png "Exercise 01")
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-04-instructions" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 4 - Building Streams
+
+- In this exercise we will be connecting all the pieces of our assembly line so that we can begin production.
+  - Start an sbt session.
+  - Make sure your prompt is:
+  ``` scala 
+  man [e] > akkassembly > building-streams >
+  ```
+  - use the man e command to see the instructions. 
+
+</script></section>
+
+</section>  <!-- trainivator-hide -->
+
+<!-- ########################################################################################### -->
+<!-- Fault Tolerance
+<!-- ########################################################################################### -->
+
+<section>  <!-- trainivator-hide -->
+
+<section id="fault-tolerance" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Fault Tolerance
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="fault-tolerance-1" class="content" data-markdown><script type="text/template">
+## Fault Tolerance
+
+``` scala
+implicit val materializer = ActorMaterializer(
+ ActorMaterializerSettings(system)
+   .withSupervisionStrategy(decider)
+)
+```
+
+- Similar to Actors, exceptions in streams can be handled using a configurable supervision strategy.
+- The default strategy is to stop all processing of the stream.
+- The default strategy can be overridden on the materializer.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="custom-supervision" class="content" data-markdown><script type="text/template">
+## Custom Supervision
+
+``` scala
+val decider: Supervision.Decider = {
+ case _: MyException => Supervision.Resume
+ case _ => Supervision.Stop
+}
+
+```
+
+- Decider is a Function from Throwable to Supervision.Directive
+- Available Directives are:
+  - Stop - Stream is terminated with an error.
+  - Resume - Failing element is dropped and the stream continues.
+  - Restart - The element is dropped and the stream continues after restarting the stage. Any state accumulated by that stage will be cleared.
+
+</script></section>
+    
+<!-- ########################################################################################### -->
+
+<section id="attributes" class="content" data-markdown><script type="text/template">
+## Attributes
+
+``` scala
+Source(1 to 10)
+  .withAttributes(ActorAttributes.dispatcher("myDispatcher"))
+  .runForeach(println)
+```
+
+- Attributes of a stage can be tuned using the “withAttributes” method.
+- Allows you to customize aspects of the stage like:
+  - Dispatcher
+  - Buffer Sizes
+  - Log Levels
+  - Supervision
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="custom-supervision-per-stage" class="content" data-markdown><script type="text/template">
+## Custom Supervision Per Stage
+
+``` scala
+val decider: Supervision.Decider = {
+ case _: ArithmeticException => Supervision.Resume
+ case _ => Supervision.Stop
+}
+val possibleDivisionByZero = 
+  Flow[Int].map(i => 100/i)
+    .withAttributes(
+      ActorAttributes.supervisionStrategy(decider)
+    )
+```
+
+- Attributes can be used to customize supervision per stage.
+- Allows you to supply a supervision strategy that will apply only to the stage.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="recover" class="content" data-markdown><script type="text/template">
+## Recover
+
+``` scala
+val recoverWithZero: Flow[Int, Int, NotUsed] = 
+  Flow[Int].recover {
+    case _: ArithmeticException => 0
+  }
+```
+
+- Sometimes, when a failure occurs, it may be desirable to terminate the stream immediately with a specific value.
+- The recover takes a PartialFunction[Throwable, T]. It will terminate the stream gracefully passing the resulting value as the final value in the stream.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-05-diagram" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 5 - Fault Tolerance
+
+![Exercise 05](images/exercise-05.png "Exercise 01")
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-05-instructions" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 5 - Fault Tolerance
+
+- In this exercise we will introduce a failure into our inspections. Rather than simply filtering out incomplete cars we will throw an exception. We will then handle that exception appropriately.
+  - Start an sbt session.
+  - Make sure your prompt is:
+  ``` scala 
+  man [e] > akkassembly > fault-tolerance >
+  ```
+  - use the man e command to see the instructions. 
+
+</script></section>
+
+</section> <!-- trainivator-hide -->
+
+
+<!-- ########################################################################################### -->
+
+
+<!-- ########################################################################################### -->
+<!-- Graphs
+<!-- ########################################################################################### -->
+
+
+<section>  <!-- trainivator-hide -->
+
+
+<section id="graphs" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Graphs
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="junctions" class="content" data-markdown><script type="text/template">
+## Junctions
+
+![Junction](images/junctions.png "Junction")
+
+- Graphs introduces the concept of Junctions.
+- Sources/Sinks/Flows are graph elements with a single input and/or output.
+- Junctions allow for multiple inputs/outputs.
+- Basic Junction types are fan-in and fan-out
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="fan-out-junctions" class="content" data-markdown><script type="text/template">
+## Fan Out Junctions
+
+![Fan Out](images/fanout.png "Fan Out")
+
+- Broadcast[T] - (1 input, N outputs) Incoming elements are emitted to all outputs.
+- Balance[T] - (1 input, N outputs) Incoming elements are emitted to one of the outputs (first available)
+- UnzipWith[In, A, B, ...] - (1 input, N outputs) Uses a function to convert 1 input element into N outputs elements and emits one to each output.
+- UnZip[A, B] - (1 input, 2 outputs) Splits a stream of Tuple2[A, B] into two streams of A and B.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="fan-in-junctions" class="content" data-markdown><script type="text/template">
+## Fan In Junctions
+
+![Fan In](images/fanin.png "Fan In")
+
+- Merge[In] - (N inputs, 1 output) randomly selects from inputs and pushes to a single output.
+- MergePreferred[In] - (N inputs, 1 output) similar to Merge, but one input is given higher priority over all others.
+- ZipWith[A, B, ..., Out] - (N inputs, 1 output) Uses a function to take one element from each input and convert them all into a single output.
+- Zip[A, B] - (2 inputs, 1 output) Zips two streams of A and B into a single stream of Tuple2[A, B]
+- Concat[A] - (2 inputs, 1 output) concatenates two streams. Consumes one completely before the other.
+
+NOTE:
+- With Concat, if the first stream is infinite, the second will never get consumed.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="graph-dsl" class="content" data-markdown><script type="text/template">
+## Graph DSL
+
+![Graph DSL](images/graphdsl.png "Graph DSL")
+
+- A Graph DSL is provided to simplify the creation of complex graphs.
+- Designed to make it easier to translate drawings into code.
+- import GraphDSL.Implicits._ to enable the DSL.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="Closed Graphs" class="content" data-markdown><script type="text/template">
+## Closed Graphs
+
+``` scala
+RunnableGraph.fromGraph(GraphDSL.create() {
+  implicit builder: GraphDSL.Builder[NotUsed] =>
+    import GraphDSL.Implicits._
+    val source = Source(1 to 10)
+    val sink = Sink.foreach(println)
+    val bcast = builder.add(Broadcast[Int](2))
+    val merge = builder.add(Merge[Int](2))
+    val f1, f2, f3, f4 = Flow[Int].map(_ + 10)
+
+    source ~> f1 ~> bcast ~> f2 ~> merge ~> f4 ~> sink
+                    bcast ~> f3 ~> merge
+
+    ClosedShape
+}).run()
+```
+- ClosedShape indicates no open inputs or outputs. This means the graph will be runnable.
+
+NOTE:
+- This graph mirrors the image on the previous slide.
+- It returns a ClosedShape. This indicates it can not be connected to other graph elements.
+- Each Flow simply adds 10 to the input so you get 31, 31, 32, 32, 33, 33 etc.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="partial-graphs-1" class="content" data-markdown><script type="text/template">
+## Partial Graphs I
+
+``` scala
+val source: Source[Int, NotUsed] = Source.fromGraph(
+  GraphDSL.create() {
+    implicit builder: GraphDSL.Builder[NotUsed] =>
+      import GraphDSL.Implicits._
+      val source1, source2 = Source(1 to 10)      
+      val merge = builder.add(Merge[Int](2))
+
+      source1 ~> merge
+      source2 ~> merge
+
+      SourceShape(merge.out)
+  }
+)
+```
+
+- Partial Graphs can be created in the shape of Linear Graph Elements (eg. Source/Sink/Flow)
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="partial-graphs-2" class="content" data-markdown><script type="text/template">
+## Partial Graphs II
+
+``` scala
+val dualPortFanIn = GraphDSL.create() {
+  implicit builder: GraphDSL.Builder[NotUsed] =>
+    val merge = builder.add(Merge[Int](2))
+    UniformFanInShape[Int, Int](
+      merge.out,
+      merge.in(0),
+      merge.in(1)
+    )
+}
+```
+
+- Partial Graphs can be created in the shape of Junctions (eg. Fan In, Fan Out)
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="predefined-shapes" class="content" data-markdown><script type="text/template">
+## Predefined Shapes
+
+- Some predefined shapes exist to allow for easier graph construction.
+- Linear Shapes 
+  - `SourceShape`, `SinkShape`, `FlowShape`
+- Junction Shapes with the same input/output types 
+  - `UniformFanInShape`, `UniformFanOutShape`
+- Junction Shapes with different input/output types 
+  - `FanInShape1`, `FanInShape2`...`FanInShape22`
+  - `FanOutShape1`, `FanOutShape2`...`FanOutShape22`
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="custom-shapes" class="content" data-markdown><script type="text/template">
+## Custom Shapes
+
+- Custom Shapes can be created beyond the built in ones.
+- Custom Shapes may have an arbitrary number of input or output ports.
+- To define a custom shape, extend `akka.stream.Shape`
+
+NOTE:
+- This is included simply to let them know it is possible. We don't provide details on how to do it.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="simpler-graphs" class="content" data-markdown><script type="text/template">
+## Simplified Graph API
+
+``` scala
+  val source1, source2 = Source(1 to 10)
+  val sink1, sink2 = Sink.foreach(println)
+
+  val mergedSource: Source[Int, NotUsed] = 
+    Source.combine(source1, source2)(Merge[Int](_))
+  val splitSink: Sink[Int, NotUsed] = 
+    Sink.combine(sink1, sink2)(Broadcast[Int](_))
+
+  mergedSource.runWith(splitSink)
+```
+
+- A simpler API exists for cases where your graph needs are small.
+- `Source.combine` - combine two or more Sources into a single Source using the provided Fan In Shape
+- `Sink.combine` - combine two or more Sinks into a single Sink using the provided Fan Out Shape
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-06-graphs" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 6 - Graphs
+
+![Exercise 06](images/exercise-06.png "Exercise 06")
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="exercise-06-instructions" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 6 - Graphs
+
+- In this exercise we will add a step to apply upgrade packages to cars. We will introduce a graph that will
+split the stream of cars into three different branches, apply upgrades to each branch, and then merge them
+back into a single stream.
+  - Start an sbt session.
+  - Make sure your prompt is:
+  ``` scala 
+  man [e] > akkassembly > graphs >
+  ```
+  - use the man e command to see the instructions. 
+
+</script></section>
+
+</section>  <!-- trainivator-hide -->
+    
+<!-- ########################################################################################### -->
+<!-- Fusion
+<!-- ########################################################################################### -->
+
+
+<section>  <!-- trainivator-hide -->
+
+
+<section id="fusion" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Fusion
+</script></section>
+    
+<!-- ########################################################################################### -->
+
+<section id="operator-fusion" class="content" data-markdown><script type="text/template">
+## Operator Fusion
+
+- Crossing asynchronous boundaries can be an expensive operation.
+- By default, Akka Streams “fuses” all processing stages into a single synchronous stage.
+- Requires an element to be processed fully before the next element starts.
+- This can be disabled by setting `akka.stream.materializer.auto-fusing=off`
+
+NOTE:
+- Earlier versions of Akka Streams did not have fusion. In essence, auto-fusing was always off.
+- Fusion provides performance benefits, so defaulting to off may not be efficient.
+
+</script></section>
+    
+<!-- ########################################################################################### -->
+
+<section id="buffers" class="content" data-markdown><script type="text/template">
+## Buffers
+
+![Buffers](images/buffers.png "Buffers")
+
+- Stages often make use of a small buffer.
+- Buffers are not present when a stage is fused.
+- The buffers can result in different behaviour in your stream.
+- Adding an asynchronous boundary will introduce the buffer.
+
+</script></section>
+
+<!-- ########################################################################################### -->
+
+<section id="asynchronous-boundaries" class="content" data-markdown><script type="text/template">
+## Asynchronous boundaries
+
+``` scala
+Source(1 to 10).async.runForeach(println)
+```
+
+- A single synchronous stage may not be sufficient or performant.
+- Asynchronous boundaries can be added to any stage using the “.async” option. 
+- This disables fusing for that stage.
+- Allows for parallel processing of stages.
+- Async boundaries create overhead in the form of:
+  - Actors
+  - Mailboxes
+  - Buffers
+- **Caution**: Introducing asynchrony is not a magic bullet. Depending on the performance characteristics of your
+stages it may provide little or no benefit.  Understanding your implementation is key.
+
+NOTE:
+- CPU Intensive operations in a pipeline are a good candidate for async boundaries
+
+</script></section>
+    
+<!-- ########################################################################################### -->
+
+<section id="exercise-07-instructions" class="content" data-markdown data-background="#49626d" data-state="h2Uppercase"><script type="text/template">
+## Exercise 7 - Fusion
+
+- In this exercise, we will introduce asynchronous boundaries to observe the effects of Fusion.
+  - Start an sbt session.
+  - Make sure your prompt is:
+  ``` scala 
+  man [e] > akkassembly > fusion >
+  ```
+  - use the man e command to see the instructions. 
+
+</script></section>
+
+</section>  <!-- trainivator-hide -->
+
+    
+<!-- ########################################################################################### -->
+<!-- Wrapping up
+<!-- ########################################################################################### -->
+
+
+<section>  <!-- trainivator-hide -->
+
+
+<section id="wrapping-up" class="content" data-markdown data-background="#1c3b48" data-state="h2Uppercase"><script type="text/template">
+## Wrapping up
+</script></section>
+
+<!-- ########################################################################################### -->
+
+
+<section id="typesafe-together" class="content" data-markdown><script type="text/template">
+## Lightbend Together
+
+- Developer and production support
+  - Maintenance of older version
+  - Proactive tips and techniques
+- Backstage pass
+  - Ask the expert webinars
+  - Early access to online courses
+- Community spotlight
+  - Posting of job openings on community page
+  - Projects highlighted on Lightbend content sites
+</script></section>
+
+
+<!-- ########################################################################################### -->
+
+
+<section id="end" class="content" data-markdown><script type="text/template">
+## The End
+### Copyright 2016 Lightbend, Inc.
+### All rights reserved.
+
+![Lightbend](images/lightbend-logo.png "Lightbend")
+
+Unless otherwise agreed, training materials may only be used for educational and reference purposes by individual named participants in a training course offered by Lightbend or a Lightbend training partner. Unauthorized reproduction, redistribution, or use of this material is prohibited.
+</script></section>
+
+
+</section>  <!-- trainivator-hide -->
+<!-- trainivator-slide-end -->
+
+
+<!-- ########################################################################################### -->
+<!-- END
+<!-- ########################################################################################### -->
+
+
+</div>
+</div>
+
+<script src="js/slide-validation.js"></script>
+<!-- TODO: Enable i18n.js if translation component has been implemented. -->
+<!-- <script src="js/i18n.js"></script> -->
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+<script src="js/modes.js" type="text/javascript"></script>
+<script>
+
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+    maxScale: 2.0,
+
+    transition: 'none', // default/cube/page/concave/zoom/linear/fade/none
+
+    multiplex: {
+      // Example values. To generate your own, see the socket.io server instructions.
+      secret: Modes.getSecretKey, // null so the clients do not have control of the master presentation
+      id: 'c39e601aa073d852', // id, obtained from socket.io server
+      url: 'revealjs.jit.su:443' // Location of your socket.io server
+    },
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+      { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js', async: true },
+      { src: '//revealjs.jit.su/socket.io/socket.io.js', async: true }, 
+      { src: Modes.getMasterJs, async: true },
+      { src: Modes.getClientJs, async: true },
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+  });
+
+  Reveal.configure({
+      slideNumber: 'c / t'
+    });
+</script>
+
+</body>
+</html>
