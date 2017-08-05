@@ -15,7 +15,7 @@ class MonitorActor extends Actor {
 
   val errorLogger = Agent(Map.empty[String, Int])
 
-  def preRestart() = errorLogger send {
+  def preRestart(): Unit = errorLogger send {
     old => Map.empty[String, Int]
   }
 
