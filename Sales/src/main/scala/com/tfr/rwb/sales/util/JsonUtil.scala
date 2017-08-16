@@ -1,24 +1,30 @@
 package com.tfr.rwb.sales.util
 
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import io.circe.{Decoder, Encoder}
+import io.circe.parser.parse
+import io.circe.syntax._
+
+import com.tfr.rwb.sales.util.CirceImplicits._
 
 /**
   * Created by Erik Hage on 8/13/2017.
   */
 object JsonUtil {
 
-  val mapper = new ObjectMapper() with ScalaObjectMapper
-  mapper.registerModule(DefaultScalaModule)
-  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-  def fromJson[T](json: String)(implicit m : Manifest[T]): T ={
-    mapper.readValue[T](json)
+  def fromJson[T](json: String)(implicit decoder: Decoder[T]): Option[T] = {
+    parse(json)
+      .right
+      .map(_.as[T])
+      .map(_.toOption) match {
+          case Right(success) => println("success!")
+            success
+          case Left(fail) => println(fail)
+            None
+    }
   }
 
-  def toJson(value: Any): String = {
-    mapper.writeValueAsString(value)
+  def toJson[T](obj: T)(implicit encoder: Encoder[T]): String = {
+    obj.asJson.toString()
   }
 
 }

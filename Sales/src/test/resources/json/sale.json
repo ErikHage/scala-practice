@@ -1,0 +1,18 @@
+{
+  "saleId": "172w-343e-rt53",
+  "saleTime": "2017-08-01 18:15:45",
+  "items": [
+    {
+      "productName": "Checks and Balances",
+      "quantity": 1,
+      "saleUnits": "Pint",
+      "unitPrice": 6.0
+    },
+    {
+      "productName": "Rosie's Red Ale",
+      "quantity": 1,
+      "saleUnits": "Pint",
+      "unitPrice": 6.0
+    }
+  ]
+}

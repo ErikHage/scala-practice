@@ -11,8 +11,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.9.0",
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.0"
+  "io.circe" %% "circe-java8" % circeVersion
 )
 
 libraryDependencies ++= Seq(
