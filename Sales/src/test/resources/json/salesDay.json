@@ -3,7 +3,6 @@
   "totalSales": 2,
   "sales": [
     {
-      "saleId": "172w-343e-rt53",
       "saleTime": "2017-08-01 18:15:45",
       "items": [
         {
@@ -21,7 +20,6 @@
       ]
     },
     {
-      "saleId": "194w-3rt5-ui54",
       "saleTime": "2017-08-01 18:20:58",
       "items": [
         {

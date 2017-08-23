@@ -3,7 +3,9 @@ package com.tfr.rwb.sales.util
 import java.time.{LocalDate, LocalDateTime}
 import java.time.format.DateTimeFormatter
 
-import com.tfr.rwb.sales.model.{Sale, SaleItem, SalesDay}
+import com.tfr.rwb.sales.model.SaleDayModel.SalesDay
+import com.tfr.rwb.sales.model.SaleItemModel.SaleItem
+import com.tfr.rwb.sales.model.SaleModel.Sale
 import io.circe.{Decoder, Encoder}
 import io.circe.generic.semiauto._
 import io.circe.java8.time.decodeLocalDateTime

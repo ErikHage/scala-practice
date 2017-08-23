@@ -2,7 +2,9 @@ package com.tfr.rwb.sales.util
 
 import java.time.{LocalDate, LocalDateTime}
 
-import com.tfr.rwb.sales.model.{Sale, SaleItem, SalesDay}
+import com.tfr.rwb.sales.model.SaleDayModel.SalesDay
+import com.tfr.rwb.sales.model.SaleItemModel.SaleItem
+import com.tfr.rwb.sales.model.SaleModel.Sale
 import com.tfr.rwb.sales.spec.UnitSpec
 
 import scala.io.Source
@@ -53,7 +55,6 @@ class JsonUtilTest extends UnitSpec {
     assert(salesDay.date == LocalDate.of(2017,8,1))
     assert(salesDay.totalSales == 2)
     assert(salesDay.sales.size == 2)
-    assert(salesDay.sales.head.saleId == "172w-343e-rt53")
     assert(salesDay.sales.head.saleTime == LocalDateTime.of(2017,8,1,18,15,45))
     assert(salesDay.sales.head.items.size == 2)
     assert(salesDay.sales.head.items.head.productName == "Checks and Balances")
@@ -61,7 +62,7 @@ class JsonUtilTest extends UnitSpec {
 
 
   "JsonUtil.toJson" should "write the input SaleItem object as a json String" in {
-    val saleItem = SaleItem("Product", 1.0, "pound", 12.0)
+    val saleItem = SaleItem(None, None, "Product", 1.0, "pound", 12.0)
     val json = JsonUtil.toJson[SaleItem](saleItem)
 
 //    println(json)
@@ -74,15 +75,14 @@ class JsonUtilTest extends UnitSpec {
   }
 
   it should "write the input Sale object as a json String" in {
-    val saleItem = SaleItem("Product", 1.0, "pound", 12.0)
-    val saleItem2 = SaleItem("Product2", 1.0, "pound", 12.0)
-    val sale = Sale("xyz1-234g-rhy6", LocalDateTime.of(2017,8,8,15,4,20), Seq(saleItem, saleItem2))
+    val saleItem = SaleItem(None, None, "Product", 1.0, "pound", 12.0)
+    val saleItem2 = SaleItem(None, None, "Product2", 1.0, "pound", 12.0)
+    val sale = Sale(None, None, LocalDateTime.of(2017,8,8,15,4,20), Seq(saleItem, saleItem2))
     val json = JsonUtil.toJson[Sale](sale)
 
 //    println(json)
 
     assert(json.isInstanceOf[String])
-    assert(json.contains(""""saleId" : "xyz1-234g-rhy6""""))
     assert(json.contains(""""saleTime" : "2017-08-08 15:04:20""""))
     assert(json.contains(""""productName" : "Product""""))
     assert(json.contains(""""productName" : "Product2""""))
@@ -92,10 +92,10 @@ class JsonUtilTest extends UnitSpec {
   }
 
   it should "write the input SalesDay object as a json String" in {
-    val saleItem = SaleItem("Product", 1.0, "pound", 12.0)
-    val saleItem2 = SaleItem("Product2", 1.0, "pound", 12.0)
-    val sale = Sale("xyz1-234g-rhy6", LocalDateTime.of(2017,8,8,15,4,20), Seq(saleItem, saleItem2))
-    val sale2 = Sale("xyz1-234g-rhy7", LocalDateTime.of(2017,8,8,15,15,45), Seq(saleItem, saleItem2))
+    val saleItem = SaleItem(None, None, "Product", 1.0, "pound", 12.0)
+    val saleItem2 = SaleItem(None, None, "Product2", 1.0, "pound", 12.0)
+    val sale = Sale(None, None, LocalDateTime.of(2017,8,8,15,4,20), Seq(saleItem, saleItem2))
+    val sale2 = Sale(None, None, LocalDateTime.of(2017,8,8,15,15,45), Seq(saleItem, saleItem2))
     val salesDay = SalesDay(LocalDate.of(2017,8,8), 2, Seq(sale, sale2))
     val json = JsonUtil.toJson[SalesDay](salesDay)
 
@@ -104,9 +104,7 @@ class JsonUtilTest extends UnitSpec {
     assert(json.isInstanceOf[String])
     assert(json.contains(""""date" : "2017-08-08""""))
     assert(json.contains(""""totalSales" : 2"""))
-    assert(json.contains(""""saleId" : "xyz1-234g-rhy6""""))
     assert(json.contains(""""saleTime" : "2017-08-08 15:04:20""""))
-    assert(json.contains(""""saleId" : "xyz1-234g-rhy7""""))
     assert(json.contains(""""productName" : "Product""""))
     assert(json.contains(""""productName" : "Product2""""))
     assert(json.contains(""""quantity" : 1.0"""))
