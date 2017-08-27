@@ -1,9 +1,9 @@
 package com.tfr.rwb.sales.model
 
-import java.sql.Timestamp
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.LocalDateTime
 
 import com.tfr.rwb.sales.model.SaleItemModel._
+import com.tfr.rwb.sales.util.SlickColumnMappings
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.H2Profile.api._
@@ -11,18 +11,13 @@ import slick.jdbc.H2Profile.api._
 /**
   * Created by Erik Hage on 8/12/2017.
   */
-object SaleModel {
-
-  implicit val localDateTimeColumnType = MappedColumnType.base[LocalDateTime, Timestamp](
-    d => Timestamp.from(d.toInstant(ZoneOffset.ofHours(0))),
-    d => d.toLocalDateTime
-  )
+object SaleModel extends SlickColumnMappings {
 
   case class Sale(
-                                     id: Option[Long] = None,
-                                     saleDayId: Option[Long] = None,
-                                     saleTime: LocalDateTime
-                                   )
+                   id: Option[Long] = None,
+                   saleDayId: Option[Long] = None,
+                   saleTime: LocalDateTime
+                 )
 
   class Sales(tag: Tag) extends Table[Sale](tag, "sale") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
