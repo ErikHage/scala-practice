@@ -9,7 +9,7 @@ import scala.concurrent.Await
 /**
   * Created by Erik on 8/21/2017.
   */
-class ProductModelTest extends H2Spec {
+class ProductModelTest extends H2Spec("h2mem2") {
 
   val product = Product(None,"Checks and Balances", "Beer", "Sample", "Sample", 3.00D)
   val product2 = Product(None,"Rosie's Red Ale", "Beer", "Pint", "Pint", 6.00D)

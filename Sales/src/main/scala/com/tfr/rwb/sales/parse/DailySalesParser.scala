@@ -1,6 +1,6 @@
 package com.tfr.rwb.sales.parse
 
-import com.tfr.rwb.sales.model.SaleDayModel.SalesDay
+import com.tfr.rwb.sales.parse.JsonModel._
 import com.tfr.rwb.sales.util.JsonUtil
 import com.tfr.rwb.sales.util.CirceImplicits._
 

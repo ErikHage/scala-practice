@@ -33,10 +33,8 @@ object ProductModel {
 
   val products = TableQuery[Products]
 
-  class ProductsRepository extends Db {
-
+  class ProductsRepository(db: Database) {
     def init() = db.run(products.schema.create)
-
     def drop() = db.run(products.schema.drop)
 
     def insert(product: Product) = db

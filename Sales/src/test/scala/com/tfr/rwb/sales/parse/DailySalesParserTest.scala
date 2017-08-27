@@ -2,7 +2,7 @@ package com.tfr.rwb.sales.parse
 
 import java.time.LocalDate
 
-import com.tfr.rwb.sales.model.SaleDayModel.SalesDay
+import com.tfr.rwb.sales.parse.JsonModel._
 import com.tfr.rwb.sales.spec.UnitSpec
 
 import scala.io.Source

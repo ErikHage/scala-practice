@@ -6,16 +6,12 @@
       "saleTime": "2017-08-01 18:15:45",
       "items": [
         {
-          "productName": "Checks and Balances",
-          "quantity": 1,
-          "saleUnits": "Pint",
-          "unitPrice": 6.0
+          "productId": 123,
+          "quantity": 1.0
         },
         {
-          "productName": "Rosie's Red Ale",
-          "quantity": 1,
-          "saleUnits": "Pint",
-          "unitPrice": 6.0
+          "productId": 125,
+          "quantity": 1.0
         }
       ]
     },
@@ -23,16 +19,12 @@
       "saleTime": "2017-08-01 18:20:58",
       "items": [
         {
-          "productName": "Checks and Balances",
-          "quantity": 1,
-          "saleUnits": "Pint",
-          "unitPrice": 6.0
+          "productId": 123,
+          "quantity": 1.0
         },
         {
-          "productName": "Steamboat Porter",
-          "quantity": 1,
-          "saleUnits": "Growler",
-          "unitPrice": 18.0
+          "productId": 125,
+          "quantity": 1.0
         }
       ]
     }

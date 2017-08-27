@@ -1,6 +1,4 @@
 {
-  "productName": "Checks and Balances",
-  "quantity": 1.0,
-  "saleUnits": "Pint",
-  "unitPrice": 6.0
+  "productId": 123,
+  "quantity": 1.0
 }
