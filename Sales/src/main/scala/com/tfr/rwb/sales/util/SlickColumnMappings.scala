@@ -10,13 +10,13 @@ import slick.jdbc.H2Profile.api._
   */
 trait SlickColumnMappings {
 
-  implicit val dateColumnType = MappedColumnType.base[LocalDate, Date](
-    d => Date.valueOf(d),
+  implicit def dateColumnType = MappedColumnType.base[LocalDate, Date](
+    l => Date.valueOf(l),
     d => d.toLocalDate
   )
 
-  implicit val localDateTimeColumnType = MappedColumnType.base[LocalDateTime, Timestamp](
-    d => Timestamp.from(d.toInstant(ZoneOffset.ofHours(0))),
+  implicit def localDateTimeColumnType = MappedColumnType.base[LocalDateTime, Timestamp](
+    l => Timestamp.from(l.toInstant(ZoneOffset.ofHours(0))),
     d => d.toLocalDateTime
   )
 

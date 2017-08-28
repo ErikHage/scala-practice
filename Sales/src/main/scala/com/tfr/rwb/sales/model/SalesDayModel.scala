@@ -1,15 +1,17 @@
 package com.tfr.rwb.sales.model
 
 import java.time.LocalDate
+import java.sql.{Date, Timestamp}
 
-import com.tfr.rwb.sales.model.SaleModel._
 import com.tfr.rwb.sales.util.SlickColumnMappings
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.H2Profile.api._
 
 /**
   * Created by Erik Hage on 8/12/2017.
   */
-object SalesDayModel extends SlickColumnMappings {
+object SalesDayModel {
 
   case class SalesDay(
                        id: Option[Long] = None,
@@ -17,13 +19,12 @@ object SalesDayModel extends SlickColumnMappings {
                        totalSales: Int
                      )
 
-  class SalesDays(tag: Tag) extends Table[SalesDay](tag, "saleDay") {
+  class SalesDays(tag: Tag) extends Table[SalesDay](tag, "saleDay") with SlickColumnMappings {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def date = column[LocalDate]("date")
+    def date = column[LocalDate]("date")(dateColumnType)
     def totalSales = column[Int]("totalSales")
 
-    def * = (id.?, date, totalSales) <>
-      (SalesDay.tupled, SalesDay.unapply)
+    def * = (id.?, date, totalSales).<>(SalesDay.tupled, SalesDay.unapply)
   }
 
   val salesDays = TableQuery[SalesDays]

@@ -2,7 +2,6 @@ package com.tfr.rwb.sales.model
 
 import java.time.LocalDateTime
 
-import com.tfr.rwb.sales.model.SaleItemModel._
 import com.tfr.rwb.sales.util.SlickColumnMappings
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,7 +10,7 @@ import slick.jdbc.H2Profile.api._
 /**
   * Created by Erik Hage on 8/12/2017.
   */
-object SaleModel extends SlickColumnMappings {
+object SaleModel {
 
   case class Sale(
                    id: Option[Long] = None,
@@ -19,10 +18,10 @@ object SaleModel extends SlickColumnMappings {
                    saleTime: LocalDateTime
                  )
 
-  class Sales(tag: Tag) extends Table[Sale](tag, "sale") {
+  class Sales(tag: Tag) extends Table[Sale](tag, "sale") with SlickColumnMappings {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def saleDayId = column[Long]("saleDayId")
-    def saleTime = column[LocalDateTime]("saleTime")
+    def saleTime = column[LocalDateTime]("saleTime")(localDateTimeColumnType)
 
     def * = (id.?, saleDayId.?, saleTime).<>(Sale.tupled, Sale.unapply)
   }
