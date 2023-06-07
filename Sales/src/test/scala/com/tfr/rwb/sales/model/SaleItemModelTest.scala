@@ -1,6 +1,6 @@
 package com.tfr.rwb.sales.model
 
-import com.tfr.rwb.sales.model.SaleItemModel.SaleItem
+import com.tfr.rwb.sales.model.SaleItemModel.SaleItemRow
 import com.tfr.rwb.sales.spec.H2Spec
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,8 +11,8 @@ import scala.concurrent.Await
   */
 class SaleItemModelTest extends H2Spec("h2mem1") {
 
-  val saleItem = SaleItem(None, Some(1L), 1L, 2.0D)
-  val saleItem2 = SaleItem(None, Some(1L), 2L, 1.0D)
+  val saleItem = SaleItemRow(None, Some(1L), 1L, 2.0D)
+  val saleItem2 = SaleItemRow(None, Some(1L), 2L, 1.0D)
 
   "SaleItemRepository.insert(SaleItem)" should "return the saleItem with an assigned id" in {
     val result = Await.result(saleItems.insert(saleItem), timeout)

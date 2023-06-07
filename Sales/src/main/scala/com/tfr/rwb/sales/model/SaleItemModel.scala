@@ -1,7 +1,5 @@
 package com.tfr.rwb.sales.model
 
-import com.tfr.rwb.sales.model.SaleModel._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.H2Profile.api._
 
@@ -10,21 +8,21 @@ import slick.jdbc.H2Profile.api._
   */
 object SaleItemModel {
 
-  case class SaleItem(
+  case class SaleItemRow(
                      id: Option[Long] = None,
                      saleId: Option[Long] = None,
                      productId: Long,
                      quantity: Double
                      )
 
-  class SaleItems(tag: Tag) extends Table[SaleItem](tag, "saleItem") {
+  class SaleItems(tag: Tag) extends Table[SaleItemRow](tag, "saleItem") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def saleId = column[Long]("saleId")
     def productId = column[Long]("productId")
     def quantity = column[Double]("quantity")
 
     def * = (id.?, saleId.?, productId, quantity) <>
-      (SaleItem.tupled, SaleItem.unapply)
+      (SaleItemRow.tupled, SaleItemRow.unapply)
 
     //def saleFK = foreignKey("sale_fk", saleId, sales)(_.id, onUpdate = ForeignKeyAction.Cascade, onDelete = ForeignKeyAction.Restrict)
   }
@@ -35,7 +33,7 @@ object SaleItemModel {
     def init() = db.run(saleItems.schema.create)
     def drop() = db.run(saleItems.schema.drop)
 
-    def insert(saleItem: SaleItem) = db
+    def insert(saleItem: SaleItemRow) = db
       .run(saleItems returning saleItems.map(_.id) += saleItem)
       .map(id => saleItem.copy(id = Some(id)))
 
@@ -47,7 +45,7 @@ object SaleItemModel {
 
     def findAll() = db.run(saleItems.result)
 
-    def update(saleItem: SaleItem) = {
+    def update(saleItem: SaleItemRow) = {
       val query = for (item <- saleItems if item.id === saleItem.id)
         yield item
       db.run(query.update(saleItem)) map { _ > 0 }
